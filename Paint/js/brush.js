@@ -7,8 +7,6 @@ function Brush(tempCanvas, tempCtx, mouse, start_mouse, mousePoints, chosenColor
 		tempCtx.strokeStyle = chosenColor;
 		tempCtx.fillStyle = chosenColor;
 		
-		// Saving all the points in an array
-		mousePoints.push({x: mouse.x, y: mouse.y});
 		
 		if (mousePoints.length < 3) {
 			var b = mousePoints[0];

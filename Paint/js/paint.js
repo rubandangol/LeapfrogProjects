@@ -13,7 +13,6 @@ function Paint(){
 	var finalCoordinates = {x: 0, y: 0};	
 	var mousePoints = [];
 
-
 	var chosenTool = 'brush';
 	var chosenColor = 'black';
 
@@ -93,8 +92,6 @@ function Paint(){
 
 			startCoordinates.x = mouse.x;
 			startCoordinates.y = mouse.y;
-
-			mousePoints.push({x: mouse.x, y: mouse.y});
 
 			checkSelection();
 
@@ -177,6 +174,8 @@ function Paint(){
 		 	circle.init();
 		}
 		else if(chosenTool == 'brush'){
+			mousePoints.push({x: mouse.x, y: mouse.y});
+			console.log(mousePoints.length);
 		 	var brush = new Brush(tempCanvas, tempCtx, mouse, startCoordinates, mousePoints, chosenColor);
 		 	brush.init();
 		}
@@ -285,8 +284,8 @@ function Paint(){
 					finalCoordinatesArray[selectedDrawing].y = startCoordinatesArray[selectedDrawing].y + height;
 
 					for(i=0; i<mousePoints.length; i++){
-						mousePoints[i].x = mouse.x - (width/2);
-						mousePoints[i].y = mouse.y - (width/2);
+						mousePoints[i].x = mousePoints[i].x + 20;
+						mousePoints[i].y = mousePoints[i].x + 20;
 					}
 
 
@@ -470,21 +469,32 @@ function Paint(){
 			layer.appendTo(document.querySelector('.select-layer'));
 			//document.querySelector('.select-layer').value=counter;
 		}
-		onSelectChange();
+		
 
 	}
 
-	var onSelectChange = function(){
+	var onSelectLayer = function(){
 
 		var select = document.querySelector('.select-layer');
-		select.onchange = onSelectChange;
-		var chosenLayer = select.options[select.selectedIndex].value;
-		drawings.switchLayer(chosenLayer, drawings.length-1);
-		startCoordinatesArray.switchLayer(chosenLayer, drawings.length-1);
-		finalCoordinatesArray.switchLayer(chosenLayer, drawings.length-1);
-		clearCanvas(ctx);
-		reDraw();		
-
+		select.onchange = onSelectLayer;
+		if (select.options.length == 0){
+			console.log('select is empty!!!');
+			
+		}else{
+			var chosenLayer = select.options[select.selectedIndex].value;
+			console.log('The chosen layer is: ' + chosenLayer);
+			var chosenLayer = select.options[select.selectedIndex].value;
+			drawings.switchLayer(chosenLayer, drawings.length-1);
+			startCoordinatesArray.switchLayer(chosenLayer, startCoordinatesArray.length-1);
+			finalCoordinatesArray.switchLayer(chosenLayer, finalCoordinatesArray.length-1);
+			clearCanvas(ctx);
+			reDraw();
+			
+			layerMenu();	
+		}
+		
+				
+	
 	}
 
 	init();
@@ -495,4 +505,5 @@ function Paint(){
 	chooseColor();
 	clickTool();
 	this.onTempCanvasClick();
+	onSelectLayer();
 }
