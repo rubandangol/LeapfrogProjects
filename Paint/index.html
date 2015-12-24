@@ -1,0 +1,40 @@
+<html>
+<head>
+	<title>MS Paint</title>
+	<link rel="stylesheet" type="text/css" href="css/reset.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+
+	<script type="text/javascript" src="js/element.js"></script>
+	<script type="text/javascript" src="js/toolBar.js"></script>
+	<script type="text/javascript" src="js/paint.js"></script>
+	<script type="text/javascript" src="js/displayCoordinates.js"></script>
+	<script type="text/javascript" src="js/brush.js"></script>
+	<script type="text/javascript" src="js/line.js"></script>
+	<script type="text/javascript" src="js/rectangle.js"></script>
+	<script type="text/javascript" src="js/circle.js"></script>
+	<script type="text/javascript" src="js/eraser.js"></script>
+	<script type="text/javascript" src="js/text.js"></script>
+	<script type="text/javascript">
+		var mainWrapper = new Element('div');
+		mainWrapper.addClass('main-wrapper');
+		mainWrapper.appendTo(document.getElementsByTagName('body')[0]);
+
+		var toolBar = new ToolBar();
+
+		var canvasWrapper = new Element('div');
+		canvasWrapper.addClass('canvas-wrapper');
+		canvasWrapper.appendTo(document.querySelector('.main-wrapper'));
+
+		var canvas = new Element('canvas');
+		canvas.addId('canvas');
+		canvas.appendTo(canvasWrapper.element);
+
+//////////////////////////////////////////////////////////////////////////////////
+
+		var paint = new Paint();
+
+	</script>
+</body>
+</html>

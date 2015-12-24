@@ -1,0 +1,129 @@
+.clearfix:before, .clearfix:after{
+	content:"";
+	display:table;
+}
+
+.clearfix:after{
+	clear:both;
+}
+
+.clearfix, .inner-wrapper{
+	zoom:1;
+}
+
+body li{
+	float: left;
+	list-style: none;
+}
+
+.main-wrapper{
+	min-width: 100%;
+}
+
+.tools-wrapper{
+	min-width: 100%;
+	height: 15%;
+	background-color: gray;
+}
+
+.canvas-wrapper{
+	min-width: 100%;
+	height: 85%;
+	position: relative;
+}
+
+#canvas{
+	width: 100%;
+	height: 100%;
+	position: absolute;
+}
+
+#tempCanvas {
+	position: absolute;
+	left: 0px; right: 0;
+	bottom: 0; top: 0;
+	cursor: crosshair;
+}
+
+.tools-wrapper li{
+	background-repeat: no-repeat;
+	background-position: center;
+	width: 32px;
+	height: 32px;
+}
+
+.tool{
+	border: 1px black solid;
+	float: left;
+	margin: 2px;
+}
+
+
+
+#move{
+	background-image: url(../images/move.png);
+}
+
+#brush{
+	background-image: url(../images/brush.png);
+	
+}
+
+#eraser{
+	background-image: url(../images/eraser.png);
+}
+
+#text{
+	background-image: url(../images/text.png);
+}
+
+#line{
+	background-image: url(../images/line.png);
+}
+
+#rectangle{
+	background-image: url(../images/rectangle.png);
+}
+
+#circle{
+	background-image: url(../images/circle.png);
+}
+
+#red{
+	background-color: red;
+}
+
+#blue{
+	background-color: blue;
+}
+
+#green{
+	background-color: green;
+}
+
+#yellow{
+	background-color: yellow;
+}
+
+#black{
+	background-color: black;
+}
+
+.x-coordinate{
+	margin-right: 5px;
+}
+
+#text_tool {
+	position: absolute;
+	border: 1px dashed black;
+	outline: 0;
+	display: none;
+	
+	font: 10px Verdana;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.mouse-coordinates-wrapper{
+	width: 200px;
+}
