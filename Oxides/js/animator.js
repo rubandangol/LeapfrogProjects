@@ -38,9 +38,8 @@ function Animator(element) {
 	// should stop the animation and element's properties should be at "end" value
 	this.finish = function(cssProperty, value, duration) {
 		clearInterval(intervalId);
-		var style = window.getComputedStyle(element);
-		var initial = style.getPropertyValue(cssProperty);
-		element.style[cssProperty] = value + 'px';
+		var num = parseInt(parseInt(element.style[cssProp]) / 1280);
+		element.style[cssProp] = (num) * 1280 + val + 'px';
 
 	}
 

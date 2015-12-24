@@ -12,14 +12,10 @@ function Slider(){
 	var sliderLeftMargin = 0;
 	var animator = new Animator(slider);
 
-		var individualInterval = setInterval(slide,2000);
-		arrowClick();
-		pagerPanel();
-		clickPager();
-		highlightPager();
-		changeSlideNumber();
+		
+		
 	
-		function slide(){
+		var slide = function(){
 			
 			
 
@@ -40,7 +36,7 @@ function Slider(){
 			
 		}
 
-		function arrowClick(){
+		var arrowClick = function(){
 
 			leftArrow.addEventListener('click', function (event) {
      				var currentLeftMargin = parseInt(slider.style.marginLeft);
@@ -96,7 +92,7 @@ function Slider(){
 
 		}
 
-		function pagerPanel(){
+		var pagerPanel = function(){
 
 			var pagerWrapper = document.getElementsByClassName('pager-wrapper')[0];
 			var ul = document.createElement('ul');
@@ -112,7 +108,7 @@ function Slider(){
 
 		}
 
-		function highlightPager(){
+		var highlightPager = function(){
 			var liArray = document.getElementsByClassName('ulPager')[0].children;
 			
 			for(var i=0; i < liArray.length; i++){
@@ -125,7 +121,7 @@ function Slider(){
 			
 		}
 
-		function clickPager(){
+		var clickPager = function(){
 			var liArray = document.getElementsByClassName('ulPager')[0].children;
 			
 			for(var i=0; i < liArray.length; i++){
@@ -147,7 +143,7 @@ function Slider(){
 			} 
 		}
 
-		function changeSlideNumber(){
+		var changeSlideNumber = function(){
 
 			var sliderLeftWrapper = document.getElementsByClassName('slider-left-wrapper')[0];
 			var sliderRightWrapper = document.getElementsByClassName('slider-right-wrapper')[0];
@@ -173,5 +169,12 @@ function Slider(){
 				sliderRightWrapper.style.visibility = "hidden";
 			}
 		}
+
+		var individualInterval = setInterval(slide,2000);
+		arrowClick();
+		pagerPanel();
+		clickPager();
+		highlightPager();
+		changeSlideNumber();
 
 }
