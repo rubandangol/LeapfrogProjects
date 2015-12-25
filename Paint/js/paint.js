@@ -1,5 +1,6 @@
 function Paint(){
 
+	var mouseMoveDistanceX = 0, mouseMoveDistanceY = 0;
 	var minMax = [];
 	var isMoving = false;
 	var selectedDrawing;
@@ -10,8 +11,10 @@ function Paint(){
 	var drawings = [];
 	var mouse = {x: 0, y: 0};
 	var startCoordinates = {x: 0, y: 0};
-	var finalCoordinates = {x: 0, y: 0};	
+	var finalCoordinates = {x: 0, y: 0};
+	var lastMouse = {x: 0, y: 0};
 	var mousePoints = [];
+	var mousePointsArray = [];
 
 	var chosenTool = 'brush';
 	var chosenColor = 'black';
@@ -74,6 +77,9 @@ function Paint(){
 	this.onTempCanvasClick = function(){
 
 		tempCanvas.addEventListener('mousemove', function(e) {
+
+			lastMouse.x = mouse.x;
+			lastMouse.y = mouse.y;
 
 			mouse.x = typeof e.offsetX !== 'undefined' ? e.offsetX : e.layerX;
 			mouse.y = typeof e.offsetY !== 'undefined' ? e.offsetY : e.layerY;
@@ -159,6 +165,7 @@ function Paint(){
 
 
 	var onPaint = function() {
+		mousePoints.push({x: mouse.x, y: mouse.y});
 		
 
 		if(chosenTool == 'line'){
@@ -174,9 +181,7 @@ function Paint(){
 		 	circle.init();
 		}
 		else if(chosenTool == 'brush'){
-			mousePoints.push({x: mouse.x, y: mouse.y});
-			console.log(mousePoints.length);
-		 	var brush = new Brush(tempCanvas, tempCtx, mouse, startCoordinates, mousePoints, chosenColor);
+		 	var brush = new Brush(tempCanvas, tempCtx, mousePoints, chosenColor);
 		 	brush.init();
 		}
 		else if(chosenTool == 'eraser'){
@@ -199,24 +204,20 @@ function Paint(){
 
 			startCoordinatesArray.push({x: startCoordinates.x, y: startCoordinates.y});
 			finalCoordinatesArray.push({x: finalCoordinates.x, y: finalCoordinates.y});
-
+			mousePointsArray.push(mousePoints);
 		}
 
 		if(chosenTool == 'line'){
 			drawings.push(new Line(tempCanvas, tempCtx, finalCoordinatesArray[counter], startCoordinatesArray[counter], chosenColor));
-
-			
 		}
 		else if(chosenTool == 'rectangle'){
 		 	drawings.push(new Rectangle(tempCanvas, tempCtx, finalCoordinatesArray[counter], startCoordinatesArray[counter], isFillChecked, chosenColor));
-		 	
 		}
 		else if(chosenTool == 'circle'){
 		 	drawings.push(new Circle(tempCanvas, tempCtx, finalCoordinatesArray[counter], startCoordinatesArray[counter], isFillChecked, chosenColor));
-
 		}
 		else if(chosenTool == 'brush'){
-		 	drawings.push(new Brush(tempCanvas, tempCtx, finalCoordinatesArray[counter], startCoordinatesArray[counter], mousePoints, chosenColor));
+		 	drawings.push(new Brush(tempCanvas, tempCtx, mousePointsArray[counter], chosenColor));
 		}
 		else if(chosenTool == 'text'){
 		 	drawings.push(new Text(tempCanvas, tempCtx, finalCoordinatesArray[counter], startCoordinatesArray[counter], textarea, chosenColor));
@@ -237,13 +238,12 @@ function Paint(){
 
 		if(chosenTool == 'move'){
 			minMax.splice(0,minMax.length);
-			for(i=0; i<startCoordinatesArray.length; i++){
+			for(i=0; i<mousePointsArray.length; i++){
 
-				var minX = Math.min(startCoordinatesArray[i].x, finalCoordinatesArray[i].x);
-				var minY = Math.min(startCoordinatesArray[i].y, finalCoordinatesArray[i].y);
-				var maxX = Math.max(startCoordinatesArray[i].x, finalCoordinatesArray[i].x);
-				var maxY = Math.max(startCoordinatesArray[i].y, finalCoordinatesArray[i].y);
-
+				var minX = Math.min.apply(Math,mousePointsArray[i].map(function(o){return o.x;}));
+				var minY = Math.min.apply(Math,mousePointsArray[i].map(function(o){return o.y;}));
+				var maxX = Math.max.apply(Math,mousePointsArray[i].map(function(o){return o.x;}));
+				var maxY = Math.max.apply(Math,mousePointsArray[i].map(function(o){return o.y;}));
 
 				minMax.push({minX: minX, minY: minY, maxX: maxX, maxY: maxY});
 
@@ -251,10 +251,10 @@ function Paint(){
 					
 					selectedDrawing = i;
 					
-					console.log('SELECTED!!');
 					isMoving = true;
 					
 				}
+				
 			}
 		}
 
@@ -265,15 +265,7 @@ function Paint(){
 
 
 				if(isMoving){
-					
-					if(startCoordinatesArray[selectedDrawing].x < finalCoordinatesArray[selectedDrawing].x){
-						console.log('START IS LESSER THAN FINAL');
-
-					}
-					else if(startCoordinatesArray[selectedDrawing].x > finalCoordinatesArray[selectedDrawing].x){
-						console.log('FINAL IS LESSER THAN START');
-					}
-					
+										
 					clearCanvas(ctx);
 					var width = finalCoordinatesArray[selectedDrawing].x - startCoordinatesArray[selectedDrawing].x;
 					var height = finalCoordinatesArray[selectedDrawing].y - startCoordinatesArray[selectedDrawing].y;
@@ -283,9 +275,15 @@ function Paint(){
 					finalCoordinatesArray[selectedDrawing].x = startCoordinatesArray[selectedDrawing].x + width;
 					finalCoordinatesArray[selectedDrawing].y = startCoordinatesArray[selectedDrawing].y + height;
 
-					for(i=0; i<mousePoints.length; i++){
-						mousePoints[i].x = mousePoints[i].x + 20;
-						mousePoints[i].y = mousePoints[i].x + 20;
+
+					//For Brush
+					var storedMousePoints = mousePointsArray[selectedDrawing];
+
+					var mouseMoveDirection = {x: mouse.x - lastMouse.x, y: mouse.y - lastMouse.y};
+
+					for(i=0; i<storedMousePoints.length; i++){
+					mousePointsArray[selectedDrawing][i].x = mousePointsArray[selectedDrawing][i].x + mouseMoveDirection.x;
+					mousePointsArray[selectedDrawing][i].y = mousePointsArray[selectedDrawing][i].y + mouseMoveDirection.y;
 					}
 
 
@@ -452,6 +450,7 @@ function Paint(){
     	this.splice(new_index, 0, this.splice(old_index, 1)[0]);
 	};
 
+
 	var layerMenu = function(){
 
 		var select = document.querySelector('.select-layer');
@@ -477,10 +476,7 @@ function Paint(){
 
 		var select = document.querySelector('.select-layer');
 		select.onchange = onSelectLayer;
-		if (select.options.length == 0){
-			console.log('select is empty!!!');
-			
-		}else{
+		if(select.options.length > 0){
 			var chosenLayer = select.options[select.selectedIndex].value;
 			console.log('The chosen layer is: ' + chosenLayer);
 			var chosenLayer = select.options[select.selectedIndex].value;

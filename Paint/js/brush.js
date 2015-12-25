@@ -1,4 +1,4 @@
-function Brush(tempCanvas, tempCtx, mouse, start_mouse, mousePoints, chosenColor) {
+function Brush(tempCanvas, tempCtx, mousePoints, chosenColor) {
 	
 	this.init = function() {
 		
