@@ -1,4 +1,4 @@
-function Rectangle(tempCanvas, tempCtx, mouse, start_mouse, fillCheck, chosenColor) {
+function Rectangle(tempCanvas, tempCtx, mouse, start_mouse, fillCheck, chosenColor, chosenSize) {
 
 	var x, y, width, height;
 	
@@ -8,6 +8,7 @@ function Rectangle(tempCanvas, tempCtx, mouse, start_mouse, fillCheck, chosenCol
 		tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
 		tempCtx.strokeStyle = chosenColor;
 		tempCtx.fillStyle = chosenColor;
+		tempCtx.lineWidth = chosenSize;
 
 		x = Math.min(mouse.x, start_mouse.x);
 		y = Math.min(mouse.y, start_mouse.y);

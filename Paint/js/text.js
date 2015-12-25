@@ -1,4 +1,4 @@
-function Text(tempCanvas, tempCtx, mouse, start_mouse, textarea, chosenColor) {
+function Text(tempCanvas, tempCtx, mouse, start_mouse, textarea, chosenColor, chosenSize) {
 	
 	this.init = function() {
 		
@@ -6,6 +6,7 @@ function Text(tempCanvas, tempCtx, mouse, start_mouse, textarea, chosenColor) {
 		tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
 		tempCtx.strokeStyle = chosenColor;
 		tempCtx.fillStyle = chosenColor;
+		tempCtx.lineWidth = chosenSize;
 		
 		var x = Math.min(mouse.x, start_mouse.x);
 		var y = Math.min(mouse.y, start_mouse.y);

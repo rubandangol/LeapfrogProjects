@@ -1,4 +1,4 @@
-function Brush(tempCanvas, tempCtx, mousePoints, chosenColor) {
+function Brush(tempCanvas, tempCtx, mousePoints, chosenColor, chosenSize) {
 	
 	this.init = function() {
 		
@@ -6,6 +6,7 @@ function Brush(tempCanvas, tempCtx, mousePoints, chosenColor) {
 		tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
 		tempCtx.strokeStyle = chosenColor;
 		tempCtx.fillStyle = chosenColor;
+		tempCtx.lineWidth = chosenSize;
 		
 		
 		if (mousePoints.length < 3) {

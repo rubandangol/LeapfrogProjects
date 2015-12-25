@@ -1,4 +1,4 @@
-function Line(tempCanvas, tempCtx, mouse, start_mouse, chosenColor) {
+function Line(tempCanvas, tempCtx, mouse, start_mouse, chosenColor, chosenSize) {
 	
 	this.init = function() {
 		
@@ -6,6 +6,7 @@ function Line(tempCanvas, tempCtx, mouse, start_mouse, chosenColor) {
 		tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
 		tempCtx.strokeStyle = chosenColor;
 		tempCtx.fillStyle = chosenColor;
+		tempCtx.lineWidth = chosenSize;
 		
 		tempCtx.beginPath();
 		tempCtx.moveTo(start_mouse.x, start_mouse.y);

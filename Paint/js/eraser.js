@@ -1,4 +1,4 @@
-function Eraser(canvas, ctx, mouse, start_mouse, mousePoints) {
+function Eraser(canvas, ctx, mouse, start_mouse, mousePoints, chosenSize) {
 	
 	this.init = function() {
 		
@@ -8,6 +8,7 @@ function Eraser(canvas, ctx, mouse, start_mouse, mousePoints) {
 		ctx.globalCompositeOperation = 'destination-out';
 		ctx.fillStyle = 'rgba(0,0,0,1)';
 		ctx.strokeStyle = 'rgba(0,0,0,1)';
+		ctx.lineWidth = chosenSize;
 		
 		if (mousePoints.length < 3) {
 			var b = mousePoints[0];

@@ -1,6 +1,5 @@
 function Paint(){
 
-	var mouseMoveDistanceX = 0, mouseMoveDistanceY = 0;
 	var minMax = [];
 	var isMoving = false;
 	var selectedDrawing;
@@ -18,6 +17,7 @@ function Paint(){
 
 	var chosenTool = 'brush';
 	var chosenColor = 'black';
+	var chosenSize;
 
 	var tools = ['move', 'brush', 'eraser', 'text', 'line', 'rectangle', 'circle'];
 	var colors = ['red', 'blue', 'green', 'yellow', 'black'];
@@ -137,17 +137,25 @@ function Paint(){
 
 			for(i=0; i<startCoordinatesArray.length; i++){
 
-				var minX = Math.min(startCoordinatesArray[i].x, finalCoordinatesArray[i].x);
-				var minY = Math.min(startCoordinatesArray[i].y, finalCoordinatesArray[i].y);
-				var maxX = Math.max(startCoordinatesArray[i].x, finalCoordinatesArray[i].x);
-				var maxY = Math.max(startCoordinatesArray[i].y, finalCoordinatesArray[i].y);
+				if(drawings[i].constructor.name == 'Brush'){
+					var minX = Math.min.apply(Math,mousePointsArray[i].map(function(o){return o.x;}));
+					var minY = Math.min.apply(Math,mousePointsArray[i].map(function(o){return o.y;}));
+					var maxX = Math.max.apply(Math,mousePointsArray[i].map(function(o){return o.x;}));
+					var maxY = Math.max.apply(Math,mousePointsArray[i].map(function(o){return o.y;}));
+				}else{
+					var minX = Math.min(startCoordinatesArray[i].x, finalCoordinatesArray[i].x);
+					var minY = Math.min(startCoordinatesArray[i].y, finalCoordinatesArray[i].y);
+					var maxX = Math.max(startCoordinatesArray[i].x, finalCoordinatesArray[i].x);
+					var maxY = Math.max(startCoordinatesArray[i].y, finalCoordinatesArray[i].y);
+				}
 
 				if((mouse.x >= minX && mouse.x <= maxX) && (mouse.y >= minY && mouse.y <= maxY)){
 				
 					console.log('DOUBLE CLICK!!');
 					drawings.switchLayer(i, drawings.length-1);
-					startCoordinatesArray.switchLayer(i, drawings.length-1);
-					finalCoordinatesArray.switchLayer(i, drawings.length-1);
+					startCoordinatesArray.switchLayer(i, startCoordinatesArray.length-1);
+					finalCoordinatesArray.switchLayer(i, finalCoordinatesArray.length-1);
+					mousePointsArray.switchLayer(i, mousePointsArray.length-1);
 					clearCanvas(ctx);
 					reDraw();
 
@@ -169,30 +177,30 @@ function Paint(){
 		
 
 		if(chosenTool == 'line'){
-			var line = new Line(tempCanvas, tempCtx, mouse, startCoordinates, chosenColor);
+			var line = new Line(tempCanvas, tempCtx, mouse, startCoordinates, chosenColor, chosenSize);
 			line.init();
 		}
 		else if(chosenTool == 'rectangle'){
-		 	var rectangle = new Rectangle(tempCanvas, tempCtx, mouse, startCoordinates, isFillChecked, chosenColor);
+		 	var rectangle = new Rectangle(tempCanvas, tempCtx, mouse, startCoordinates, isFillChecked, chosenColor, chosenSize);
 		 	rectangle.init();
 		}
 		else if(chosenTool == 'circle'){
-		 	var circle = new Circle(tempCanvas, tempCtx, mouse, startCoordinates, isFillChecked, chosenColor);
+		 	var circle = new Circle(tempCanvas, tempCtx, mouse, startCoordinates, isFillChecked, chosenColor, chosenSize);
 		 	circle.init();
 		}
 		else if(chosenTool == 'brush'){
-		 	var brush = new Brush(tempCanvas, tempCtx, mousePoints, chosenColor);
+		 	var brush = new Brush(tempCanvas, tempCtx, mousePoints, chosenColor, chosenSize);
 		 	brush.init();
 		}
 		else if(chosenTool == 'eraser'){
-			var eraser = new Eraser(canvas, ctx, mouse, startCoordinates, mousePoints);
+			var eraser = new Eraser(canvas, ctx, mouse, startCoordinates, mousePoints, chosenSize);
 			eraser.init();
 		}
 		else if(chosenTool == 'move'){
 			onMoveDrawing();
 		}
 		else if(chosenTool == 'text'){
-			var text = new Text(tempCanvas, tempCtx, mouse, startCoordinates, textarea, chosenColor);
+			var text = new Text(tempCanvas, tempCtx, mouse, startCoordinates, textarea, chosenColor, chosenSize);
 			text.init();
 		}
 
@@ -208,22 +216,22 @@ function Paint(){
 		}
 
 		if(chosenTool == 'line'){
-			drawings.push(new Line(tempCanvas, tempCtx, finalCoordinatesArray[counter], startCoordinatesArray[counter], chosenColor));
+			drawings.push(new Line(tempCanvas, tempCtx, finalCoordinatesArray[counter], startCoordinatesArray[counter], chosenColor, chosenSize));
 		}
 		else if(chosenTool == 'rectangle'){
-		 	drawings.push(new Rectangle(tempCanvas, tempCtx, finalCoordinatesArray[counter], startCoordinatesArray[counter], isFillChecked, chosenColor));
+		 	drawings.push(new Rectangle(tempCanvas, tempCtx, finalCoordinatesArray[counter], startCoordinatesArray[counter], isFillChecked, chosenColor, chosenSize));
 		}
 		else if(chosenTool == 'circle'){
-		 	drawings.push(new Circle(tempCanvas, tempCtx, finalCoordinatesArray[counter], startCoordinatesArray[counter], isFillChecked, chosenColor));
+		 	drawings.push(new Circle(tempCanvas, tempCtx, finalCoordinatesArray[counter], startCoordinatesArray[counter], isFillChecked, chosenColor, chosenSize));
 		}
 		else if(chosenTool == 'brush'){
-		 	drawings.push(new Brush(tempCanvas, tempCtx, mousePointsArray[counter], chosenColor));
+		 	drawings.push(new Brush(tempCanvas, tempCtx, mousePointsArray[counter], chosenColor, chosenSize));
 		}
 		else if(chosenTool == 'text'){
-		 	drawings.push(new Text(tempCanvas, tempCtx, finalCoordinatesArray[counter], startCoordinatesArray[counter], textarea, chosenColor));
+		 	drawings.push(new Text(tempCanvas, tempCtx, finalCoordinatesArray[counter], startCoordinatesArray[counter], textarea, chosenColor, chosenSize));
 		}
 		else if(chosenTool == 'eraser'){
-			//drawings.push(new Eraser(canvas, ctx, finalCoordinatesArray[counter], startCoordinatesArray[counter], mousePoints));
+			//drawings.push(new Eraser(canvas, ctx, finalCoordinatesArray[counter], startCoordinatesArray[counter], mousePoints, chosenSize));
 		}
 
 
@@ -238,12 +246,19 @@ function Paint(){
 
 		if(chosenTool == 'move'){
 			minMax.splice(0,minMax.length);
-			for(i=0; i<mousePointsArray.length; i++){
+			for(i=0; i<startCoordinatesArray.length; i++){
 
-				var minX = Math.min.apply(Math,mousePointsArray[i].map(function(o){return o.x;}));
-				var minY = Math.min.apply(Math,mousePointsArray[i].map(function(o){return o.y;}));
-				var maxX = Math.max.apply(Math,mousePointsArray[i].map(function(o){return o.x;}));
-				var maxY = Math.max.apply(Math,mousePointsArray[i].map(function(o){return o.y;}));
+				if(drawings[i].constructor.name == 'Brush'){
+					var minX = Math.min.apply(Math,mousePointsArray[i].map(function(o){return o.x;}));
+					var minY = Math.min.apply(Math,mousePointsArray[i].map(function(o){return o.y;}));
+					var maxX = Math.max.apply(Math,mousePointsArray[i].map(function(o){return o.x;}));
+					var maxY = Math.max.apply(Math,mousePointsArray[i].map(function(o){return o.y;}));
+				}else{
+					var minX = Math.min(startCoordinatesArray[i].x, finalCoordinatesArray[i].x);
+					var minY = Math.min(startCoordinatesArray[i].y, finalCoordinatesArray[i].y);
+					var maxX = Math.max(startCoordinatesArray[i].x, finalCoordinatesArray[i].x);
+					var maxY = Math.max(startCoordinatesArray[i].y, finalCoordinatesArray[i].y);
+				}
 
 				minMax.push({minX: minX, minY: minY, maxX: maxX, maxY: maxY});
 
@@ -277,15 +292,16 @@ function Paint(){
 
 
 					//For Brush
-					var storedMousePoints = mousePointsArray[selectedDrawing];
+					if(drawings[selectedDrawing].constructor.name == 'Brush'){
+						var storedMousePoints = mousePointsArray[selectedDrawing];
 
-					var mouseMoveDirection = {x: mouse.x - lastMouse.x, y: mouse.y - lastMouse.y};
+						var mouseMoveDirection = {x: mouse.x - lastMouse.x, y: mouse.y - lastMouse.y};
 
-					for(i=0; i<storedMousePoints.length; i++){
-					mousePointsArray[selectedDrawing][i].x = mousePointsArray[selectedDrawing][i].x + mouseMoveDirection.x;
-					mousePointsArray[selectedDrawing][i].y = mousePointsArray[selectedDrawing][i].y + mouseMoveDirection.y;
+						for(i=0; i<storedMousePoints.length; i++){
+							mousePointsArray[selectedDrawing][i].x = mousePointsArray[selectedDrawing][i].x + mouseMoveDirection.x;
+							mousePointsArray[selectedDrawing][i].y = mousePointsArray[selectedDrawing][i].y + mouseMoveDirection.y;
+						}
 					}
-
 
 					reDraw();						
 				}		
@@ -337,9 +353,7 @@ function Paint(){
 
 		var selectElement = document.getElementsByClassName('select-size')[0];
 		selectElement.onchange = selectSize;
-		var chosenSize = selectElement.options[selectElement.selectedIndex].value;
-		ctx.lineWidth = chosenSize;
-		tempCtx.lineWidth = chosenSize;
+		chosenSize = selectElement.options[selectElement.selectedIndex].value;
 	}
 
 	var showMoveCoordinates = function(){
@@ -483,6 +497,7 @@ function Paint(){
 			drawings.switchLayer(chosenLayer, drawings.length-1);
 			startCoordinatesArray.switchLayer(chosenLayer, startCoordinatesArray.length-1);
 			finalCoordinatesArray.switchLayer(chosenLayer, finalCoordinatesArray.length-1);
+			mousePointsArray.switchLayer(chosenLayer, mousePointsArray.length-1);
 			clearCanvas(ctx);
 			reDraw();
 			
