@@ -73,6 +73,10 @@ body li{
 	background-image: url(../images/eraser.png);
 }
 
+#bucket{
+	background-image: url(../images/bucket.png);
+}
+
 #text{
 	background-image: url(../images/text.png);
 }

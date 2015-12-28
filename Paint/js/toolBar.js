@@ -2,32 +2,15 @@ function ToolBar(){
 	
 	this.createToolWrapper = function(){
 		var toolsWrapper = new Element('div');
-		toolsWrapper.addClass('tools-wrapper');
+		toolsWrapper.addClass('tools-wrapper clearfix');
 		toolsWrapper.appendTo(document.querySelector('.main-wrapper'));
 
-		this.createImageTools();
 		this.createItems();
 		this.createShapes();
 		this.createColorPalette();
 		this.createSizes();
 		this.createMouseCoordinates();
 		this.otherTools();
-	}
-
-	this.createImageTools = function(){
-		var imageToolsWrapper = new Element('div');
-		imageToolsWrapper.addClass('image-tools-wrapper tool');
-		imageToolsWrapper.appendTo(document.querySelector('.tools-wrapper'));
-
-		var imageToolsList = new Element('ul');
-		imageToolsList.addClass('image-tools-list');
-		imageToolsList.appendTo(document.querySelector('.image-tools-wrapper'));
-
-		var move = new Element('li');
-		move.addClass('image-tool');
-		move.addId('move');
-		move.appendTo(document.querySelector('.image-tools-list'));
-
 	}
 		
 	this.createItems = function(){
@@ -39,6 +22,11 @@ function ToolBar(){
 		itemsList.addClass('items-list');
 		itemsList.appendTo(document.querySelector('.items-wrapper'));
 
+		var move = new Element('li');
+		move.addClass('item');
+		move.addId('move');
+		move.appendTo(document.querySelector('.items-list'));
+
 		var brush = new Element('li');
 		brush.addClass('item');
 		brush.addId('brush');
@@ -48,6 +36,11 @@ function ToolBar(){
 		eraser.addClass('item');
 		eraser.addId('eraser');
 		eraser.appendTo(document.querySelector('.items-list'));
+
+		var bucket = new Element('li');
+		bucket.addClass('item');
+		bucket.addId('bucket');
+		bucket.appendTo(document.querySelector('.items-list'));
 
 		var textArea = new Element('li');
 		textArea.addClass('item');
@@ -229,7 +222,12 @@ function ToolBar(){
 		redraw.addId('redraw-button');
 		redraw.innerHtml('Redraw');
 		redraw.appendTo(document.querySelector('.other-tools-wrapper'));
-	
+
+		var save = new Element('button');
+		save.addId('save-button');
+		save.innerHtml('Save');
+		save.appendTo(document.querySelector('.other-tools-wrapper'));
+
 		var selectLayer = new Element('select');
 		selectLayer.addClass('select-layer');
 		selectLayer.appendTo(document.querySelector('.other-tools-wrapper'));

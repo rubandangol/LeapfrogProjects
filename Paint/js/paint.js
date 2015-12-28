@@ -1,7 +1,7 @@
 function Paint(){
 
 	var minMax = [];
-	var isMoving = false;
+	var isSelected = false;
 	var selectedDrawing;
 	var isFillChecked;
 	var counter = 0;
@@ -19,12 +19,14 @@ function Paint(){
 	var chosenColor = 'black';
 	var chosenSize;
 
-	var tools = ['move', 'brush', 'eraser', 'text', 'line', 'rectangle', 'circle'];
+	var tools = ['move', 'brush', 'eraser', 'bucket', 'text', 'line', 'rectangle', 'circle'];
 	var colors = ['red', 'blue', 'green', 'yellow', 'black'];
 	
 	var canvas, ctx, tempCanvas, tempCtx;
 	var textarea, tempTextCtx;
 	var coordinatesDisplay;
+
+	var text;
 
 	var init = function(){
 
@@ -74,7 +76,7 @@ function Paint(){
 
 
 	/* TEMPORARY CANVAS Event Listener */
-	this.onTempCanvasClick = function(){
+	var onTempCanvasClick = function(){
 
 		tempCanvas.addEventListener('mousemove', function(e) {
 
@@ -99,7 +101,13 @@ function Paint(){
 			startCoordinates.x = mouse.x;
 			startCoordinates.y = mouse.y;
 
-			checkSelection();
+			if(chosenTool == 'move' || chosenTool == 'bucket'){
+				checkSelection();
+			}
+
+			if(chosenTool == 'bucket'){
+				pourBucket();
+			}
 
 		}, false);
 
@@ -112,13 +120,12 @@ function Paint(){
 			tempCanvas.removeEventListener('mousemove', showDrawCoordinates, false);
 
 			if(chosenTool == 'text'){
-				onText();
+				text.onText();
 			}
 
 			if(chosenTool != 'move'){
 				onStore();	
-			}
-			
+			}			
 			
 			ctx.globalCompositeOperation = 'source-over';
 
@@ -129,8 +136,9 @@ function Paint(){
 			// Emptying up Pencil Points
 			mousePoints = [];
 
-			isMoving = false;
+			isSelected = false;
 		
+			console.log('drawings length: ' + drawings.length);
 		}, false);
 
 		tempCanvas.addEventListener('dblclick', function(){ 
@@ -200,7 +208,7 @@ function Paint(){
 			onMoveDrawing();
 		}
 		else if(chosenTool == 'text'){
-			var text = new Text(tempCanvas, tempCtx, mouse, startCoordinates, textarea, chosenColor, chosenSize);
+			text = new Text(tempCanvas, tempCtx, tempTextCtx, mouse, startCoordinates, textarea, chosenColor, chosenSize);
 			text.init();
 		}
 
@@ -208,7 +216,7 @@ function Paint(){
 
 	var onStore = function(){
 
-		if(chosenTool != 'eraser'){
+		if(chosenTool != 'eraser' && chosenTool != 'bucket'){
 
 			startCoordinatesArray.push({x: startCoordinates.x, y: startCoordinates.y});
 			finalCoordinatesArray.push({x: finalCoordinates.x, y: finalCoordinates.y});
@@ -228,13 +236,11 @@ function Paint(){
 		 	drawings.push(new Brush(tempCanvas, tempCtx, mousePointsArray[counter], chosenColor, chosenSize));
 		}
 		else if(chosenTool == 'text'){
-		 	drawings.push(new Text(tempCanvas, tempCtx, finalCoordinatesArray[counter], startCoordinatesArray[counter], textarea, chosenColor, chosenSize));
+		 	drawings.push(new Text(tempCanvas, tempCtx, tempTextCtx, finalCoordinatesArray[counter], startCoordinatesArray[counter], textarea, chosenColor, chosenSize));
 		}
 		else if(chosenTool == 'eraser'){
 			//drawings.push(new Eraser(canvas, ctx, finalCoordinatesArray[counter], startCoordinatesArray[counter], mousePoints, chosenSize));
 		}
-
-
 
 		counter++;
 
@@ -244,8 +250,7 @@ function Paint(){
 
 	var checkSelection = function(){
 
-		if(chosenTool == 'move'){
-			minMax.splice(0,minMax.length);
+		
 			for(i=0; i<startCoordinatesArray.length; i++){
 
 				if(drawings[i].constructor.name == 'Brush'){
@@ -260,18 +265,15 @@ function Paint(){
 					var maxY = Math.max(startCoordinatesArray[i].y, finalCoordinatesArray[i].y);
 				}
 
-				minMax.push({minX: minX, minY: minY, maxX: maxX, maxY: maxY});
-
 				if((mouse.x >= minX && mouse.x <= maxX) && (mouse.y >= minY && mouse.y <= maxY)){
 					
 					selectedDrawing = i;
 					
-					isMoving = true;
+					isSelected = true;
 					
 				}
 				
-			}
-		}
+			}	
 
 	}
 
@@ -279,7 +281,7 @@ function Paint(){
 	var onMoveDrawing = function(){
 
 
-				if(isMoving){
+				if(isSelected){
 										
 					clearCanvas(ctx);
 					var width = finalCoordinatesArray[selectedDrawing].x - startCoordinatesArray[selectedDrawing].x;
@@ -366,62 +368,6 @@ function Paint(){
 		coordinatesDisplay.displayDrawCoordinates(mouse, startCoordinates);
 	}
 
-	var onText = function(){
-
-		var lines = textarea.value.split('\n');
-		var processedLines = [];
-		
-		for (var i = 0; i < lines.length; i++) {
-			var chars = lines[i].length;
-			
-			for (var j = 0; j < chars; j++) {
-				var text_node = document.createTextNode(lines[i][j]);
-				tempTextCtx.appendChild(text_node);
-			
-				tempTextCtx.style.position   = 'absolute';
-				tempTextCtx.style.visibility = 'hidden';
-				tempTextCtx.style.display    = 'block';
-				
-				var width = tempTextCtx.offsetWidth;
-				var height = tempTextCtx.offsetHeight;
-				
-				tempTextCtx.style.position   = '';
-				tempTextCtx.style.visibility = '';
-				tempTextCtx.style.display    = 'none';
-				
-				// Logix
-				if (width > parseInt(textarea.style.width)) {
-					break;
-				}
-			}
-			
-			processedLines.push(tempTextCtx.textContent);
-			tempTextCtx.innerHTML = '';
-		}
-		
-		var textAreaStyle = getComputedStyle(textarea);
-		var fSize = textAreaStyle.getPropertyValue('font-size');
-		var fFamily = textAreaStyle.getPropertyValue('font-family');
-		
-		tempCtx.font = fSize + ' ' + fFamily;
-		tempCtx.textBaseline = 'top';
-		
-		for (var n = 0; n < processedLines.length; n++) {
-			var processed_line = processedLines[n];
-			
-			tempCtx.fillText(
-				processed_line,
-				parseInt(textarea.style.left),
-				parseInt(textarea.style.top) + n*parseInt(fSize)
-			);
-		}
-		
-		// clearInterval(sprayIntervalID);
-		textarea.style.display = 'none';
-		textarea.value = '';
-
-	}
-
 	var onClearButton = function(){
 		document.getElementById('clear-button').addEventListener('click', function (event) {
      			
@@ -437,6 +383,24 @@ function Paint(){
 			reDraw();
 	 	});
 
+	}
+
+	var onSaveButton = function(){
+
+		var ua = window.navigator.userAgent;
+
+			document.getElementById('save-button').addEventListener('click', function (event) {
+				
+				if (ua.indexOf("Chrome") > 0) {
+ 
+                    // save image as png
+                    var link = document.createElement('a');
+                    link.download = "canvas.png";
+                    link.href = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");;
+                    link.click();
+                }
+
+	 		});
 	}
 
 	var reDraw = function(){
@@ -503,18 +467,52 @@ function Paint(){
 			
 			layerMenu();	
 		}
-		
-				
-	
+	}
+
+	var pourBucket = function(){
+		if(isSelected){
+			console.log('Fill shape: ' + drawings[selectedDrawing].constructor.name);
+
+			switch(drawings[selectedDrawing].constructor.name){
+
+				case 'Line':
+				console.log('It is a line!!!!!!!!');
+				drawings[selectedDrawing] = new Line(tempCanvas, tempCtx, finalCoordinatesArray[selectedDrawing], startCoordinatesArray[selectedDrawing], chosenColor, chosenSize);
+				break;
+
+				case 'Rectangle':
+				console.log('It is a rectangle!!!!!!!!');
+				drawings[selectedDrawing] = new Rectangle(tempCanvas, tempCtx, finalCoordinatesArray[selectedDrawing], startCoordinatesArray[selectedDrawing], true, chosenColor, chosenSize);
+				break;
+			
+				case 'Circle':
+				console.log('It is a circle!!!!!!!!');
+				drawings[selectedDrawing] = new Circle(tempCanvas, tempCtx, finalCoordinatesArray[selectedDrawing], startCoordinatesArray[selectedDrawing], true, chosenColor, chosenSize);
+				break;
+
+				case 'Brush':
+				drawings[selectedDrawing] = new Brush(tempCanvas, tempCtx, mousePointsArray[selectedDrawing], chosenColor, chosenSize);
+				break;
+
+			}
+
+			clearCanvas(ctx);
+			reDraw();
+		}
+
+		else{
+			canvas.style.backgroundColor = chosenColor;
+		}
 	}
 
 	init();
 	onClearButton();
 	onRedrawButton();
+	onSaveButton();
 	selectSize();
 	checkFill();
 	chooseColor();
 	clickTool();
-	this.onTempCanvasClick();
+	onTempCanvasClick();
 	onSelectLayer();
 }
