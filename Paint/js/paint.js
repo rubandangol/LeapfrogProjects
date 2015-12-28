@@ -1,6 +1,5 @@
 function Paint(){
 
-	var minMax = [];
 	var isSelected = false;
 	var selectedDrawing;
 	var isFillChecked;
@@ -242,9 +241,11 @@ function Paint(){
 			//drawings.push(new Eraser(canvas, ctx, finalCoordinatesArray[counter], startCoordinatesArray[counter], mousePoints, chosenSize));
 		}
 
-		counter++;
+		if(chosenTool != 'eraser' && chosenTool != 'bucket'){
+			counter++;
 
-		layerMenu();
+			layerMenu();
+		}
 
 	}
 
@@ -339,9 +340,6 @@ function Paint(){
      			console.log(chosenColor);
 	 		});
 		}
-
-	
-
 	}
 
 	var checkFill = function(){

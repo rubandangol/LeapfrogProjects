@@ -9,6 +9,7 @@ function ToolBar(){
 		this.createShapes();
 		this.createColorPalette();
 		this.createSizes();
+		this.createLayer();
 		this.createMouseCoordinates();
 		this.otherTools();
 	}
@@ -17,6 +18,11 @@ function ToolBar(){
 		var itemsWrapper = new Element('div');
 		itemsWrapper.addClass('items-wrapper tool');
 		itemsWrapper.appendTo(document.querySelector('.tools-wrapper'));
+
+		var itemsTitle = new Element('span');
+		itemsTitle.addClass('title');
+		itemsTitle.innerHtml('Tools')
+		itemsTitle.appendTo(document.querySelector('.items-wrapper')); 
 
 		var itemsList = new Element('ul');
 		itemsList.addClass('items-list');
@@ -53,6 +59,11 @@ function ToolBar(){
 		shapesWrapper.addClass('shapes-wrapper tool');
 		shapesWrapper.appendTo(document.querySelector('.tools-wrapper'));
 
+		var shapesTitle = new Element('span');
+		shapesTitle.addClass('title');
+		shapesTitle.innerHtml('Shapes')
+		shapesTitle.appendTo(document.querySelector('.shapes-wrapper')); 
+
 		var shapesList = new Element('ul');
 		shapesList.addClass('shapes-list');
 		shapesList.appendTo(document.querySelector('.shapes-wrapper'));
@@ -84,12 +95,18 @@ function ToolBar(){
 		fillShapes.addId('fill-check');
 		fillShapes.addType('checkbox');
 		fillShapes.appendTo(document.querySelector('.fill-wrapper'));
+
 	}
 
 	this.createColorPalette = function(){
 		var colorPaletteWrapper = new Element('div');
 		colorPaletteWrapper.addClass('color-palette-wrapper tool');
 		colorPaletteWrapper.appendTo(document.querySelector('.tools-wrapper'));
+
+		var colorTitle = new Element('span');
+		colorTitle.addClass('title');
+		colorTitle.innerHtml('Colors')
+		colorTitle.appendTo(document.querySelector('.color-palette-wrapper')); 
 
 		var colorList = new Element('ul');
 		colorList.addClass('color-list');
@@ -126,6 +143,11 @@ function ToolBar(){
 		sizesWrapper.addClass('sizes-wrapper tool');
 		sizesWrapper.appendTo(document.querySelector('.tools-wrapper'));
 
+		var sizesTitle = new Element('span');
+		sizesTitle.addClass('title');
+		sizesTitle.innerHtml('Size')
+		sizesTitle.appendTo(document.querySelector('.sizes-wrapper'));
+
 		var select = new Element('select');
 		select.addClass('select-size');
 		select.appendTo(document.querySelector('.sizes-wrapper'));
@@ -156,54 +178,90 @@ function ToolBar(){
 		option5.appendTo(document.querySelector('.select-size'));
 	}
 
+	this.createLayer = function(){
+		var layerWrapper = new Element('div');
+		layerWrapper.addClass('layer-wrapper tool');
+		layerWrapper.appendTo(document.querySelector('.tools-wrapper'));
+
+		var layerTitle = new Element('span');
+		layerTitle.addClass('title');
+		layerTitle.innerHtml('Layer');
+		layerTitle.appendTo(document.querySelector('.layer-wrapper'));
+
+		var selectLayer = new Element('select');
+		selectLayer.addClass('select-layer');
+		selectLayer.appendTo(document.querySelector('.layer-wrapper'));
+	}
+
 	this.createMouseCoordinates = function(){
 
 		var mouseCoordinatesWrapper = new Element('div');
 		mouseCoordinatesWrapper.addClass('mouse-coordinates-wrapper tool');
 		mouseCoordinatesWrapper.appendTo(document.querySelector('.tools-wrapper'));		
 
+		var coordinatesTitle = new Element('span');
+		coordinatesTitle.addClass('title');
+		coordinatesTitle.innerHtml('Coordinates')
+		coordinatesTitle.appendTo(document.querySelector('.mouse-coordinates-wrapper'));
+
 		var moveCoordinatesWrapper = new Element('div');
-		moveCoordinatesWrapper.addClass('move-coordinates-wrapper');
+		moveCoordinatesWrapper.addClass('move-coordinates-wrapper clearfix');
 		moveCoordinatesWrapper.appendTo(document.querySelector('.mouse-coordinates-wrapper'));
 
-		var moveX = new Element('span');
-		moveX.innerHtml('moveX: ');
-		moveX.appendTo(document.querySelector('.move-coordinates-wrapper'));
+		var moveX = new Element('div');
+		moveX.addClass('x-move-wrapper x-coord-wrapper');
+		moveX.appendTo(document.querySelector('.move-coordinates-wrapper')); 
+
+		var moveTextX = new Element('span');
+		moveTextX.innerHtml('moveX: ');
+		moveTextX.appendTo(document.querySelector('.x-move-wrapper'));
 
 		var xMoveCoordinate = new Element('span');
 		xMoveCoordinate.addId('x-move-coordinate');
 		xMoveCoordinate.addClass('x-coordinate');
-		xMoveCoordinate.appendTo(document.querySelector('.move-coordinates-wrapper'));
+		xMoveCoordinate.appendTo(document.querySelector('.x-move-wrapper'));
 
-		var moveY = new Element('span');
-		moveY.innerHtml('moveY: ');
-		moveY.appendTo(document.querySelector('.move-coordinates-wrapper'));
+		var moveY = new Element('div');
+		moveY.addClass('y-move-wrapper y-coord-wrapper');
+		moveY.appendTo(document.querySelector('.move-coordinates-wrapper')); 
+
+		var moveTextY = new Element('span');
+		moveTextY.innerHtml('moveY: ');
+		moveTextY.appendTo(document.querySelector('.y-move-wrapper'));
 
 		var yMoveCoordinate = new Element('span');
 		yMoveCoordinate.addId('y-move-coordinate');
-		yMoveCoordinate.appendTo(document.querySelector('.move-coordinates-wrapper'));
+		yMoveCoordinate.appendTo(document.querySelector('.y-move-wrapper'));
 
 
 		var drawCoordinatesWrapper = new Element('div');
-		drawCoordinatesWrapper.addClass('draw-coordinates-wrapper');
+		drawCoordinatesWrapper.addClass('draw-coordinates-wrapper clearfix');
 		drawCoordinatesWrapper.appendTo(document.querySelector('.mouse-coordinates-wrapper'));
 
-		var drawX = new Element('span');
-		drawX.innerHtml('drawX: ');
-		drawX.appendTo(document.querySelector('.draw-coordinates-wrapper'));
+		var drawX = new Element('div');
+		drawX.addClass('x-draw-wrapper x-coord-wrapper');
+		drawX.appendTo(document.querySelector('.draw-coordinates-wrapper')); 
+
+		var drawTextX = new Element('span');
+		drawTextX.innerHtml('drawX: ');
+		drawTextX.appendTo(document.querySelector('.x-draw-wrapper'));
 
 		var xDrawCoordinate = new Element('span');
 		xDrawCoordinate.addId('x-draw-coordinate');
 		xDrawCoordinate.addClass('x-coordinate');
-		xDrawCoordinate.appendTo(document.querySelector('.draw-coordinates-wrapper'));
+		xDrawCoordinate.appendTo(document.querySelector('.x-draw-wrapper'));
 
-		var drawY = new Element('span');
-		drawY.innerHtml('drawY: ');
-		drawY.appendTo(document.querySelector('.draw-coordinates-wrapper'));
+		var drawY = new Element('div');
+		drawY.addClass('y-draw-wrapper y-coord-wrapper');
+		drawY.appendTo(document.querySelector('.draw-coordinates-wrapper')); 
+
+		var drawTextY = new Element('span');
+		drawTextY.innerHtml('drawY: ');
+		drawTextY.appendTo(document.querySelector('.y-draw-wrapper'));
 
 		var yDrawCoordinate = new Element('span');
 		yDrawCoordinate.addId('y-draw-coordinate');
-		yDrawCoordinate.appendTo(document.querySelector('.draw-coordinates-wrapper'));
+		yDrawCoordinate.appendTo(document.querySelector('.y-draw-wrapper'));
 			
 	}
 
@@ -212,6 +270,11 @@ function ToolBar(){
 		var otherToolsWrapper = new Element('div');
 		otherToolsWrapper.addClass('other-tools-wrapper tool');
 		otherToolsWrapper.appendTo(document.querySelector('.tools-wrapper'));
+
+		var othersTitle = new Element('span');
+		othersTitle.addClass('title');
+		othersTitle.innerHtml('Other Tools')
+		othersTitle.appendTo(document.querySelector('.other-tools-wrapper'));
 
 		var clearButton = new Element('button');
 		clearButton.addId('clear-button');
@@ -227,11 +290,6 @@ function ToolBar(){
 		save.addId('save-button');
 		save.innerHtml('Save');
 		save.appendTo(document.querySelector('.other-tools-wrapper'));
-
-		var selectLayer = new Element('select');
-		selectLayer.addClass('select-layer');
-		selectLayer.appendTo(document.querySelector('.other-tools-wrapper'));
-
 		
 
 	}
