@@ -25,6 +25,8 @@ function Paint(){
 	var textarea, tempTextCtx;
 	var coordinatesDisplay;
 
+	var firstIndex = 0;
+
 	var text;
 
 	var init = function(){
@@ -67,7 +69,6 @@ function Paint(){
 
 
 		coordinatesDisplay = new CoordinatesDisplay();
-
 	}
 
 	
@@ -138,11 +139,25 @@ function Paint(){
 			isSelected = false;
 		
 			console.log('drawings length: ' + drawings.length);
+
+			if(drawings.length > 0){
+				if(drawings[0].constructor.name == 'Bucket'){
+					console.log('Frst layer is a bucket');
+					firstIndex = 1;
+				}
+				else{
+					console.log('First layer is not a bucket');
+					firstIndex = 0;
+				}
+			}
+
 		}, false);
 
 		tempCanvas.addEventListener('dblclick', function(){ 
 
-			for(i=0; i<startCoordinatesArray.length; i++){
+
+
+			for(i=firstIndex; i<startCoordinatesArray.length; i++){
 
 				if(drawings[i].constructor.name == 'Brush'){
 					var minX = Math.min.apply(Math,mousePointsArray[i].map(function(o){return o.x;}));
@@ -252,7 +267,7 @@ function Paint(){
 	var checkSelection = function(){
 
 		
-			for(i=0; i<startCoordinatesArray.length; i++){
+			for(i=firstIndex; i<startCoordinatesArray.length; i++){
 
 				if(drawings[i].constructor.name == 'Brush'){
 					var minX = Math.min.apply(Math,mousePointsArray[i].map(function(o){return o.x;}));
@@ -300,7 +315,7 @@ function Paint(){
 
 						var mouseMoveDirection = {x: mouse.x - lastMouse.x, y: mouse.y - lastMouse.y};
 
-						for(i=0; i<storedMousePoints.length; i++){
+						for(i=firstIndex; i<storedMousePoints.length; i++){
 							mousePointsArray[selectedDrawing][i].x = mousePointsArray[selectedDrawing][i].x + mouseMoveDirection.x;
 							mousePointsArray[selectedDrawing][i].y = mousePointsArray[selectedDrawing][i].y + mouseMoveDirection.y;
 						}
@@ -435,7 +450,7 @@ function Paint(){
   			select.remove(select.selectedIndex);
 		}
 
-		for(i=drawings.length-1; i>=0; i--){
+		for(i=drawings.length-1; i>=firstIndex; i--){
 			var layerName = drawings[i].constructor.name;
 
 			var layer = new Element('option');
@@ -499,7 +514,32 @@ function Paint(){
 		}
 
 		else{
-			canvas.style.backgroundColor = chosenColor;
+
+			//canvas.style.backgroundColor = chosenColor;
+			if(drawings.length == 0){
+				drawings.push(new Bucket(tempCanvas, tempCtx, chosenColor));
+				startCoordinatesArray.push({x: 0, y: 0});
+				finalCoordinatesArray.push({x: 0, y: 0});
+				mousePointsArray.push({x: 0, y: 0});
+
+				counter++;
+			}
+			else if(drawings[0].constructor.name == 'Bucket'){
+				console.log('Bucket is already there.');
+				drawings[0] = new Bucket(tempCanvas, tempCtx, chosenColor);
+			}
+			else if(drawings[0].constructor.name != 'Bucket'){
+				console.log('Bucket is already there.');
+				drawings.unshift(new Bucket(tempCanvas, tempCtx, chosenColor));
+				startCoordinatesArray.unshift({x: 0, y: 0});
+				finalCoordinatesArray.unshift({x: 0, y: 0});
+				mousePointsArray.unshift({x: 0, y: 0});
+
+				counter++;
+			}			
+
+			clearCanvas(ctx);
+			reDraw();		
 		}
 	}
 
