@@ -160,6 +160,15 @@ body{
 	text-align: center;
 }
 
+.delete-layer{
+	width: 20px;
+	height: 20px;
+	background-image: url(../images/delete-layer.png);
+	padding-right: 4px;
+	float: left;
+}
+
 .select-layer{
 	width: 104px;
+	float: right;
 }

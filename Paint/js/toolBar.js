@@ -188,9 +188,17 @@ function ToolBar(){
 		layerTitle.innerHtml('Layer');
 		layerTitle.appendTo(document.querySelector('.layer-wrapper'));
 
+		var innerlayerWrapper = new Element('div');
+		innerlayerWrapper.addClass('inner-layer-wrapper clearfix');
+		innerlayerWrapper.appendTo(document.querySelector('.layer-wrapper'));
+
+		var deleteLayer = new Element('div');
+		deleteLayer.addClass('delete-layer');
+		deleteLayer.appendTo(document.querySelector('.inner-layer-wrapper'));
+
 		var selectLayer = new Element('select');
 		selectLayer.addClass('select-layer');
-		selectLayer.appendTo(document.querySelector('.layer-wrapper'));
+		selectLayer.appendTo(document.querySelector('.inner-layer-wrapper'));
 	}
 
 	this.createMouseCoordinates = function(){
@@ -275,6 +283,11 @@ function ToolBar(){
 		othersTitle.addClass('title');
 		othersTitle.innerHtml('Other Tools')
 		othersTitle.appendTo(document.querySelector('.other-tools-wrapper'));
+
+		var newButton = new Element('button');
+		newButton.addId('new-button');
+		newButton.innerHtml('New');
+		newButton.appendTo(document.querySelector('.other-tools-wrapper'));
 
 		var clearButton = new Element('button');
 		clearButton.addId('clear-button');

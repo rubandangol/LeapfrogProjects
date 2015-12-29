@@ -315,7 +315,7 @@ function Paint(){
 
 						var mouseMoveDirection = {x: mouse.x - lastMouse.x, y: mouse.y - lastMouse.y};
 
-						for(i=firstIndex; i<storedMousePoints.length; i++){
+						for(i=0; i<storedMousePoints.length; i++){
 							mousePointsArray[selectedDrawing][i].x = mousePointsArray[selectedDrawing][i].x + mouseMoveDirection.x;
 							mousePointsArray[selectedDrawing][i].y = mousePointsArray[selectedDrawing][i].y + mouseMoveDirection.y;
 						}
@@ -379,6 +379,29 @@ function Paint(){
 	var showDrawCoordinates = function(){
 
 		coordinatesDisplay.displayDrawCoordinates(mouse, startCoordinates);
+	}
+
+	var onNewButton = function(){
+
+		document.getElementById('new-button').addEventListener('click', function (event) {
+     		
+			clearCanvas(ctx);
+			drawings.splice(0, drawings.length);
+			startCoordinatesArray.splice(0, startCoordinatesArray.length);
+			finalCoordinatesArray.splice(0, finalCoordinatesArray.length);
+			mousePointsArray.splice(0, mousePointsArray.length);
+		
+			counter = 0;
+
+			var select = document.querySelector('.select-layer');
+			var selectLength = select.options.length;
+			for (i = 0; i < selectLength; i++) {
+  				select.remove(select.selectedIndex);
+			}
+
+			reDraw();
+
+	 	});
 	}
 
 	var onClearButton = function(){
@@ -482,6 +505,28 @@ function Paint(){
 		}
 	}
 
+	var onDeleteLayer = function(){
+
+		var deleteLayer = document.querySelector('.delete-layer');		
+		deleteLayer.addEventListener('click', function (event) {
+     			console.log('Delete Layer!!');
+
+     			drawings.splice(drawings.length - 1, 1);
+				startCoordinatesArray.splice(startCoordinatesArray.length - 1, 1);
+				finalCoordinatesArray.splice(finalCoordinatesArray.length - 1, 1);
+				mousePointsArray.splice(mousePointsArray.length - 1, 1);
+
+				counter--;
+
+				var select = document.querySelector('.select-layer');				
+  				select.remove(select.selectedIndex);
+				
+
+				clearCanvas(ctx);
+				reDraw();
+	 		});
+	}
+
 	var pourBucket = function(){
 		if(isSelected){
 			console.log('Fill shape: ' + drawings[selectedDrawing].constructor.name);
@@ -544,6 +589,7 @@ function Paint(){
 	}
 
 	init();
+	onNewButton();
 	onClearButton();
 	onRedrawButton();
 	onSaveButton();
@@ -553,4 +599,5 @@ function Paint(){
 	clickTool();
 	onTempCanvasClick();
 	onSelectLayer();
+	onDeleteLayer();
 }
