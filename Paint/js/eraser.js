@@ -13,17 +13,12 @@ function Eraser(canvas, ctx, mouse, start_mouse, mousePoints, chosenSize) {
 		if (mousePoints.length < 3) {
 			var b = mousePoints[0];
 			ctx.beginPath();
-			//ctx.moveTo(b.x, b.y);
-			//ctx.lineTo(b.x+50, b.y+50);
 			ctx.arc(b.x, b.y, ctx.lineWidth / 2, 0, Math.PI * 2, !0);
 			ctx.fill();
 			ctx.closePath();
 			
 			return;
 		}
-		
-		// Tmp canvas is always cleared up before drawing.
-		// ctx.clearRect(0, 0, canvas.width, canvas.height);
 		
 		ctx.beginPath();
 		ctx.moveTo(mousePoints[0].x, mousePoints[0].y);
@@ -43,6 +38,6 @@ function Eraser(canvas, ctx, mouse, start_mouse, mousePoints, chosenSize) {
 			mousePoints[i + 1].y
 		);
 		ctx.stroke();
-	};
+	}
 
 }

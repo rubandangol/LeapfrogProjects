@@ -1,10 +1,11 @@
 function Circle(tempCanvas, tempCtx, mouse, start_mouse, fillCheck, chosenColor, chosenSize) {
 
 	var x, y, width, height;
+	//var ox, oy, xe, ye, xm. ym;
 
 	this.init = function() {
 		
-		// Tmp canvas is always cleared up before drawing.
+		// Tmp canvas is cleared up before drawing.
 		tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
 		tempCtx.strokeStyle = chosenColor;
 		tempCtx.fillStyle = chosenColor;
@@ -37,6 +38,6 @@ function Circle(tempCanvas, tempCtx, mouse, start_mouse, fillCheck, chosenColor,
 			tempCtx.stroke();	
 		}
 		
-	};
+	}
 
 }

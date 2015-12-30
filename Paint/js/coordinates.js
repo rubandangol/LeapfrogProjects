@@ -1,4 +1,4 @@
-function CoordinatesDisplay(){
+function Coordinates(){
 
 	this.displayMoveCoordinates = function(mouse){
 

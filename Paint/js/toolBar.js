@@ -3,7 +3,7 @@ function ToolBar(){
 	this.createToolWrapper = function(){
 		var toolsWrapper = new Element('div');
 		toolsWrapper.addClass('tools-wrapper clearfix');
-		toolsWrapper.appendTo(document.querySelector('.main-wrapper'));
+		toolsWrapper.appendTo(document.querySelector('.inner-main-wrapper'));
 
 		this.createItems();
 		this.createShapes();
@@ -47,11 +47,6 @@ function ToolBar(){
 		bucket.addClass('item');
 		bucket.addId('bucket');
 		bucket.appendTo(document.querySelector('.items-list'));
-
-		var textArea = new Element('li');
-		textArea.addClass('item');
-		textArea.addId('text');
-		textArea.appendTo(document.querySelector('.items-list'));
 	}
 
 	this.createShapes = function(){
@@ -281,7 +276,7 @@ function ToolBar(){
 
 		var othersTitle = new Element('span');
 		othersTitle.addClass('title');
-		othersTitle.innerHtml('Other Tools')
+		othersTitle.innerHtml('Others')
 		othersTitle.appendTo(document.querySelector('.other-tools-wrapper'));
 
 		var newButton = new Element('button');

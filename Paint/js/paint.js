@@ -1,12 +1,11 @@
 function Paint(){
 
 	var isSelected = false;
-	var selectedDrawing;
 	var isFillChecked;
-	var counter = 0;
+
 	var startCoordinatesArray = [];
 	var finalCoordinatesArray = [];
-	var drawings = [];
+	var layers = [];
 	var mouse = {x: 0, y: 0};
 	var startCoordinates = {x: 0, y: 0};
 	var finalCoordinates = {x: 0, y: 0};
@@ -17,17 +16,16 @@ function Paint(){
 	var chosenTool = 'brush';
 	var chosenColor = 'black';
 	var chosenSize;
+	var selectedDrawing;
 
-	var tools = ['move', 'brush', 'eraser', 'bucket', 'text', 'line', 'rectangle', 'circle'];
+	var tools = ['move', 'brush', 'eraser', 'bucket', 'line', 'rectangle', 'circle'];
 	var colors = ['red', 'blue', 'green', 'yellow', 'black'];
 	
 	var canvas, ctx, tempCanvas, tempCtx;
-	var textarea, tempTextCtx;
-	var coordinatesDisplay;
+	var coordinates;
 
+	var counter = 0;
 	var firstIndex = 0;
-
-	var text;
 
 	var init = function(){
 
@@ -48,32 +46,19 @@ function Paint(){
 		canvasWrapper.appendChild(tempCanvas);
 
 		tempCtx.lineJoin = 'round';
-		tempCtx.lineCap = 'round';
+		tempCtx.lineCap = 'round';	
 
-//////////////////////////////////////////////
-	
-		textarea = document.createElement('textarea');
-		textarea.id = 'text_tool';
-		canvasWrapper.appendChild(textarea);
-	
-		// Text tool's text container for calculating
-		// lines/chars
-		tempTextCtx = document.createElement('div');
-		tempTextCtx.style.display = 'none';
-		canvasWrapper.appendChild(tempTextCtx);
-	
-	
-		textarea.addEventListener('mouseup', function(e) {
-			tempCanvas.removeEventListener('mousemove', onPaint, false);
-		}, false);
+		coordinates = new Coordinates();
 
-
-		coordinatesDisplay = new CoordinatesDisplay();
+		selectSize();
+		checkFill();
+		selectColor();
+		selectTool();
+		onTempCanvasClick();
+		changeLayer();
+		deleteLayer();
+		onButtonsClick();
 	}
-
-	
-//////////////////////////////////////////////
-
 
 	/* TEMPORARY CANVAS Event Listener */
 	var onTempCanvasClick = function(){
@@ -119,29 +104,27 @@ function Paint(){
 			tempCanvas.removeEventListener('mousemove', onPaint, false);
 			tempCanvas.removeEventListener('mousemove', showDrawCoordinates, false);
 
-			if(chosenTool == 'text'){
-				text.onText();
-			}
-
 			if(chosenTool != 'move'){
-				onStore();	
+				if((finalCoordinates.x - startCoordinates.x) > 0 || (finalCoordinates.y - startCoordinates.y) > 0){
+					storeLayer();
+				}	
 			}			
 			
 			ctx.globalCompositeOperation = 'source-over';
 
-			// Writing down to real canvas now
+			// Writing down to real canvas from temporary canvas
 			ctx.drawImage(tempCanvas, 0, 0);
 			// Clearing tmp canvas
 			clearCanvas(tempCtx);
-			// Emptying up Pencil Points
+			// Emptying up mouse points
 			mousePoints = [];
 
 			isSelected = false;
 		
-			console.log('drawings length: ' + drawings.length);
+			console.log('layers length: ' + layers.length);
 
-			if(drawings.length > 0){
-				if(drawings[0].constructor.name == 'Bucket'){
+			if(layers.length > 0){
+				if(layers[0].constructor.name == 'Bucket'){
 					console.log('Frst layer is a bucket');
 					firstIndex = 1;
 				}
@@ -159,7 +142,7 @@ function Paint(){
 
 			for(i=firstIndex; i<startCoordinatesArray.length; i++){
 
-				if(drawings[i].constructor.name == 'Brush'){
+				if(layers[i].constructor.name == 'Brush'){
 					var minX = Math.min.apply(Math,mousePointsArray[i].map(function(o){return o.x;}));
 					var minY = Math.min.apply(Math,mousePointsArray[i].map(function(o){return o.y;}));
 					var maxX = Math.max.apply(Math,mousePointsArray[i].map(function(o){return o.x;}));
@@ -174,7 +157,7 @@ function Paint(){
 				if((mouse.x >= minX && mouse.x <= maxX) && (mouse.y >= minY && mouse.y <= maxY)){
 				
 					console.log('DOUBLE CLICK!!');
-					drawings.switchLayer(i, drawings.length-1);
+					layers.switchLayer(i, layers.length-1);
 					startCoordinatesArray.switchLayer(i, startCoordinatesArray.length-1);
 					finalCoordinatesArray.switchLayer(i, finalCoordinatesArray.length-1);
 					mousePointsArray.switchLayer(i, mousePointsArray.length-1);
@@ -187,7 +170,7 @@ function Paint(){
 			
 			}
 
-			layerMenu();
+			showLayerMenu();
   			
 		});
 
@@ -197,38 +180,41 @@ function Paint(){
 	var onPaint = function() {
 		mousePoints.push({x: mouse.x, y: mouse.y});
 		
+		switch(chosenTool){
 
-		if(chosenTool == 'line'){
-			var line = new Line(tempCanvas, tempCtx, mouse, startCoordinates, chosenColor, chosenSize);
-			line.init();
-		}
-		else if(chosenTool == 'rectangle'){
-		 	var rectangle = new Rectangle(tempCanvas, tempCtx, mouse, startCoordinates, isFillChecked, chosenColor, chosenSize);
-		 	rectangle.init();
-		}
-		else if(chosenTool == 'circle'){
-		 	var circle = new Circle(tempCanvas, tempCtx, mouse, startCoordinates, isFillChecked, chosenColor, chosenSize);
-		 	circle.init();
-		}
-		else if(chosenTool == 'brush'){
-		 	var brush = new Brush(tempCanvas, tempCtx, mousePoints, chosenColor, chosenSize);
-		 	brush.init();
-		}
-		else if(chosenTool == 'eraser'){
-			var eraser = new Eraser(canvas, ctx, mouse, startCoordinates, mousePoints, chosenSize);
-			eraser.init();
-		}
-		else if(chosenTool == 'move'){
-			onMoveDrawing();
-		}
-		else if(chosenTool == 'text'){
-			text = new Text(tempCanvas, tempCtx, tempTextCtx, mouse, startCoordinates, textarea, chosenColor, chosenSize);
-			text.init();
+			case 'line':
+				var line = new Line(tempCanvas, tempCtx, mouse, startCoordinates, chosenColor, chosenSize);
+				line.init();
+				break;
+		
+			case 'rectangle':
+		 		var rectangle = new Rectangle(tempCanvas, tempCtx, mouse, startCoordinates, isFillChecked, chosenColor, chosenSize);
+		 		rectangle.init();
+				break;
+
+			case 'circle':
+		 		var circle = new Circle(tempCanvas, tempCtx, mouse, startCoordinates, isFillChecked, chosenColor, chosenSize);
+		 		circle.init();
+		 		break;
+		
+			case 'brush':
+		 		var brush = new Brush(tempCanvas, tempCtx, mousePoints, chosenColor, chosenSize);
+		 		brush.init();
+		 		break;
+		
+			case 'eraser':
+				var eraser = new Eraser(canvas, ctx, mouse, startCoordinates, mousePoints, chosenSize);
+				eraser.init();
+				break;
+		
+			case 'move':
+				dragLayer();
+				break;
 		}
 
-	};
+	}
 
-	var onStore = function(){
+	var storeLayer = function(){
 
 		if(chosenTool != 'eraser' && chosenTool != 'bucket'){
 
@@ -237,29 +223,35 @@ function Paint(){
 			mousePointsArray.push(mousePoints);
 		}
 
-		if(chosenTool == 'line'){
-			drawings.push(new Line(tempCanvas, tempCtx, finalCoordinatesArray[counter], startCoordinatesArray[counter], chosenColor, chosenSize));
-		}
-		else if(chosenTool == 'rectangle'){
-		 	drawings.push(new Rectangle(tempCanvas, tempCtx, finalCoordinatesArray[counter], startCoordinatesArray[counter], isFillChecked, chosenColor, chosenSize));
-		}
-		else if(chosenTool == 'circle'){
-		 	drawings.push(new Circle(tempCanvas, tempCtx, finalCoordinatesArray[counter], startCoordinatesArray[counter], isFillChecked, chosenColor, chosenSize));
-		}
-		else if(chosenTool == 'brush'){
-		 	drawings.push(new Brush(tempCanvas, tempCtx, mousePointsArray[counter], chosenColor, chosenSize));
-		}
-		else if(chosenTool == 'text'){
-		 	drawings.push(new Text(tempCanvas, tempCtx, tempTextCtx, finalCoordinatesArray[counter], startCoordinatesArray[counter], textarea, chosenColor, chosenSize));
-		}
-		else if(chosenTool == 'eraser'){
-			//drawings.push(new Eraser(canvas, ctx, finalCoordinatesArray[counter], startCoordinatesArray[counter], mousePoints, chosenSize));
+		switch(chosenTool){
+
+			case 'line':
+				layers.push(new Line(tempCanvas, tempCtx, finalCoordinatesArray[counter], startCoordinatesArray[counter], chosenColor, chosenSize));
+				break;
+
+			case 'rectangle':
+		 		layers.push(new Rectangle(tempCanvas, tempCtx, finalCoordinatesArray[counter], startCoordinatesArray[counter], isFillChecked, chosenColor, chosenSize));
+				break;
+
+			case 'circle':
+		 		layers.push(new Circle(tempCanvas, tempCtx, finalCoordinatesArray[counter], startCoordinatesArray[counter], isFillChecked, chosenColor, chosenSize));
+				break;
+
+			case 'brush':
+		 		layers.push(new Brush(tempCanvas, tempCtx, mousePointsArray[counter], chosenColor, chosenSize));
+				break;
+
+			case 'eraser':
+				//layers.push(new Eraser(canvas, ctx, finalCoordinatesArray[counter], startCoordinatesArray[counter], mousePoints, chosenSize));
+				break;
+		
+
 		}
 
 		if(chosenTool != 'eraser' && chosenTool != 'bucket'){
 			counter++;
 
-			layerMenu();
+			showLayerMenu();
 		}
 
 	}
@@ -269,7 +261,7 @@ function Paint(){
 		
 			for(i=firstIndex; i<startCoordinatesArray.length; i++){
 
-				if(drawings[i].constructor.name == 'Brush'){
+				if(layers[i].constructor.name == 'Brush'){
 					var minX = Math.min.apply(Math,mousePointsArray[i].map(function(o){return o.x;}));
 					var minY = Math.min.apply(Math,mousePointsArray[i].map(function(o){return o.y;}));
 					var maxX = Math.max.apply(Math,mousePointsArray[i].map(function(o){return o.x;}));
@@ -294,7 +286,7 @@ function Paint(){
 	}
 
 
-	var onMoveDrawing = function(){
+	var dragLayer = function(){
 
 
 				if(isSelected){
@@ -310,7 +302,7 @@ function Paint(){
 
 
 					//For Brush
-					if(drawings[selectedDrawing].constructor.name == 'Brush'){
+					if(layers[selectedDrawing].constructor.name == 'Brush'){
 						var storedMousePoints = mousePointsArray[selectedDrawing];
 
 						var mouseMoveDirection = {x: mouse.x - lastMouse.x, y: mouse.y - lastMouse.y};
@@ -330,7 +322,7 @@ function Paint(){
     }
 
 
-	var clickTool = function(){
+	var selectTool = function(){
 		
 		var element = [];
 
@@ -344,7 +336,7 @@ function Paint(){
 
 	}
 
-	var chooseColor = function(){
+	var selectColor = function(){
 
 		var colorElement = [];
 
@@ -373,20 +365,21 @@ function Paint(){
 
 	var showMoveCoordinates = function(){
 
-		coordinatesDisplay.displayMoveCoordinates(mouse);
+		coordinates.displayMoveCoordinates(mouse);
 	}
 
 	var showDrawCoordinates = function(){
 
-		coordinatesDisplay.displayDrawCoordinates(mouse, startCoordinates);
+		coordinates.displayDrawCoordinates(mouse, startCoordinates);
 	}
 
-	var onNewButton = function(){
+	var onButtonsClick = function(){
 
+		//New Button event listener
 		document.getElementById('new-button').addEventListener('click', function (event) {
      		
 			clearCanvas(ctx);
-			drawings.splice(0, drawings.length);
+			layers.splice(0, layers.length);
 			startCoordinatesArray.splice(0, startCoordinatesArray.length);
 			finalCoordinatesArray.splice(0, finalCoordinatesArray.length);
 			mousePointsArray.splice(0, mousePointsArray.length);
@@ -402,48 +395,43 @@ function Paint(){
 			reDraw();
 
 	 	});
-	}
 
-	var onClearButton = function(){
-		document.getElementById('clear-button').addEventListener('click', function (event) {
+		//Clear All button event listener
+	 	document.getElementById('clear-button').addEventListener('click', function (event) {
      			
 			console.log('CLEAR THE CANVAS!');
 			clearCanvas(ctx);
 
 	 	});
-	}
 
-	var onRedrawButton = function(){
-
-		document.getElementById('redraw-button').addEventListener('click', function (event) {
+	 	//Redraw button event listener
+	 	document.getElementById('redraw-button').addEventListener('click', function (event) {
 			reDraw();
 	 	});
 
-	}
+	 	//User Agent for saving image
+	 	var userAgent = window.navigator.userAgent;
 
-	var onSaveButton = function(){
-
-		var ua = window.navigator.userAgent;
-
-			document.getElementById('save-button').addEventListener('click', function (event) {
+	 	//Save button event listener
+		document.getElementById('save-button').addEventListener('click', function (event) {
 				
-				if (ua.indexOf("Chrome") > 0) {
+			if (userAgent.indexOf("Chrome") > 0) {
  
-                    // save image as png
-                    var link = document.createElement('a');
-                    link.download = "canvas.png";
-                    link.href = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");;
-                    link.click();
-                }
+                // save image as png
+                var link = document.createElement('a');
+                link.download = "canvas.png";
+                link.href = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");;
+                link.click();
+            }
 
-	 		});
+	 	});
 	}
 
 	var reDraw = function(){
 
-		for(i=0; i<drawings.length; i++){
-				drawings[i];
-				drawings[i].init();
+		for(i=0; i<layers.length; i++){
+				layers[i];
+				layers[i].init();
 				ctx.globalCompositeOperation = 'source-over';
 
 				// Writing down to real canvas now
@@ -465,7 +453,7 @@ function Paint(){
 	};
 
 
-	var layerMenu = function(){
+	var showLayerMenu = function(){
 
 		var select = document.querySelector('.select-layer');
 		var selectLength = select.options.length;
@@ -473,12 +461,12 @@ function Paint(){
   			select.remove(select.selectedIndex);
 		}
 
-		for(i=drawings.length-1; i>=firstIndex; i--){
-			var layerName = drawings[i].constructor.name;
+		for(i=layers.length-1; i>=firstIndex; i--){
+			var layerName = layers[i].constructor.name;
 
 			var layer = new Element('option');
 			layer.addValue(i);
-			layer.innerHtml(layerName + ' ' + i);
+			layer.innerHtml('Layer ' + i + ': ' + layerName);
 			layer.appendTo(document.querySelector('.select-layer'));
 			//document.querySelector('.select-layer').value=counter;
 		}
@@ -486,32 +474,32 @@ function Paint(){
 
 	}
 
-	var onSelectLayer = function(){
+	var changeLayer = function(){
 
 		var select = document.querySelector('.select-layer');
-		select.onchange = onSelectLayer;
+		select.onchange = changeLayer;
 		if(select.options.length > 0){
 			var chosenLayer = select.options[select.selectedIndex].value;
 			console.log('The chosen layer is: ' + chosenLayer);
 			var chosenLayer = select.options[select.selectedIndex].value;
-			drawings.switchLayer(chosenLayer, drawings.length-1);
+			layers.switchLayer(chosenLayer, layers.length-1);
 			startCoordinatesArray.switchLayer(chosenLayer, startCoordinatesArray.length-1);
 			finalCoordinatesArray.switchLayer(chosenLayer, finalCoordinatesArray.length-1);
 			mousePointsArray.switchLayer(chosenLayer, mousePointsArray.length-1);
 			clearCanvas(ctx);
 			reDraw();
 			
-			layerMenu();	
+			showLayerMenu();	
 		}
 	}
 
-	var onDeleteLayer = function(){
+	var deleteLayer = function(){
 
 		var deleteLayer = document.querySelector('.delete-layer');		
 		deleteLayer.addEventListener('click', function (event) {
      			console.log('Delete Layer!!');
 
-     			drawings.splice(drawings.length - 1, 1);
+     			layers.splice(layers.length - 1, 1);
 				startCoordinatesArray.splice(startCoordinatesArray.length - 1, 1);
 				finalCoordinatesArray.splice(finalCoordinatesArray.length - 1, 1);
 				mousePointsArray.splice(mousePointsArray.length - 1, 1);
@@ -529,27 +517,27 @@ function Paint(){
 
 	var pourBucket = function(){
 		if(isSelected){
-			console.log('Fill shape: ' + drawings[selectedDrawing].constructor.name);
+			console.log('Fill shape: ' + layers[selectedDrawing].constructor.name);
 
-			switch(drawings[selectedDrawing].constructor.name){
+			switch(layers[selectedDrawing].constructor.name){
 
 				case 'Line':
 				console.log('It is a line!!!!!!!!');
-				drawings[selectedDrawing] = new Line(tempCanvas, tempCtx, finalCoordinatesArray[selectedDrawing], startCoordinatesArray[selectedDrawing], chosenColor, chosenSize);
+				layers[selectedDrawing] = new Line(tempCanvas, tempCtx, finalCoordinatesArray[selectedDrawing], startCoordinatesArray[selectedDrawing], chosenColor, chosenSize);
 				break;
 
 				case 'Rectangle':
 				console.log('It is a rectangle!!!!!!!!');
-				drawings[selectedDrawing] = new Rectangle(tempCanvas, tempCtx, finalCoordinatesArray[selectedDrawing], startCoordinatesArray[selectedDrawing], true, chosenColor, chosenSize);
+				layers[selectedDrawing] = new Rectangle(tempCanvas, tempCtx, finalCoordinatesArray[selectedDrawing], startCoordinatesArray[selectedDrawing], true, chosenColor, chosenSize);
 				break;
 			
 				case 'Circle':
 				console.log('It is a circle!!!!!!!!');
-				drawings[selectedDrawing] = new Circle(tempCanvas, tempCtx, finalCoordinatesArray[selectedDrawing], startCoordinatesArray[selectedDrawing], true, chosenColor, chosenSize);
+				layers[selectedDrawing] = new Circle(tempCanvas, tempCtx, finalCoordinatesArray[selectedDrawing], startCoordinatesArray[selectedDrawing], true, chosenColor, chosenSize);
 				break;
 
 				case 'Brush':
-				drawings[selectedDrawing] = new Brush(tempCanvas, tempCtx, mousePointsArray[selectedDrawing], chosenColor, chosenSize);
+				layers[selectedDrawing] = new Brush(tempCanvas, tempCtx, mousePointsArray[selectedDrawing], chosenColor, chosenSize);
 				break;
 
 			}
@@ -560,22 +548,21 @@ function Paint(){
 
 		else{
 
-			//canvas.style.backgroundColor = chosenColor;
-			if(drawings.length == 0){
-				drawings.push(new Bucket(tempCanvas, tempCtx, chosenColor));
+			if(layers.length == 0){
+				layers.push(new Bucket(tempCanvas, tempCtx, chosenColor));
 				startCoordinatesArray.push({x: 0, y: 0});
 				finalCoordinatesArray.push({x: 0, y: 0});
 				mousePointsArray.push({x: 0, y: 0});
 
 				counter++;
 			}
-			else if(drawings[0].constructor.name == 'Bucket'){
+			else if(layers[0].constructor.name == 'Bucket'){
 				console.log('Bucket is already there.');
-				drawings[0] = new Bucket(tempCanvas, tempCtx, chosenColor);
+				layers[0] = new Bucket(tempCanvas, tempCtx, chosenColor);
 			}
-			else if(drawings[0].constructor.name != 'Bucket'){
+			else if(layers[0].constructor.name != 'Bucket'){
 				console.log('Bucket is already there.');
-				drawings.unshift(new Bucket(tempCanvas, tempCtx, chosenColor));
+				layers.unshift(new Bucket(tempCanvas, tempCtx, chosenColor));
 				startCoordinatesArray.unshift({x: 0, y: 0});
 				finalCoordinatesArray.unshift({x: 0, y: 0});
 				mousePointsArray.unshift({x: 0, y: 0});
@@ -589,15 +576,4 @@ function Paint(){
 	}
 
 	init();
-	onNewButton();
-	onClearButton();
-	onRedrawButton();
-	onSaveButton();
-	selectSize();
-	checkFill();
-	chooseColor();
-	clickTool();
-	onTempCanvasClick();
-	onSelectLayer();
-	onDeleteLayer();
 }

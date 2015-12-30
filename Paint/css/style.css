@@ -21,19 +21,34 @@ body{
 }
 
 .main-wrapper{
-	min-width: 100%;
+	width: 100%;
+	height: 100%;
+	background-color: #100c0c;
+}
+
+.inner-main-wrapper{
+	width: 1280px;
+	margin: 0 auto;
 }
 
 .tools-wrapper{
-	min-width: 100%;
+	min-width: 1270;
 	height: 85px;
 	background-color: #1e1b1b;
 	padding: 5px;
 }
 
+.outer-canvas-wrapper{
+	width: 1260px;
+	height: 525px;
+	padding: 10px;
+	background-color: #343434;
+}
+
 .canvas-wrapper{
-	min-width: 100%;
-	height: 88%;
+	min-width: 1260px;
+	height: 525px;
+	background-color: #ffffff;
 	position: relative;
 }
 
@@ -88,10 +103,6 @@ body{
 
 #bucket{
 	background-image: url(../images/bucket.png);
-}
-
-#text{
-	background-image: url(../images/text.png);
 }
 
 #line{
@@ -169,6 +180,6 @@ body{
 }
 
 .select-layer{
-	width: 104px;
+	width: 140px;
 	float: right;
 }

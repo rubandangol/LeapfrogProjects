@@ -2,8 +2,6 @@ function Brush(tempCanvas, tempCtx, mousePoints, chosenColor, chosenSize) {
 	
 	this.init = function() {
 		
-		// Tmp canvas is always cleared up before drawing.
-		tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
 		tempCtx.strokeStyle = chosenColor;
 		tempCtx.fillStyle = chosenColor;
 		tempCtx.lineWidth = chosenSize;
@@ -12,8 +10,6 @@ function Brush(tempCanvas, tempCtx, mousePoints, chosenColor, chosenSize) {
 		if (mousePoints.length < 3) {
 			var b = mousePoints[0];
 			tempCtx.beginPath();
-			//ctx.moveTo(b.x, b.y);
-			//ctx.lineTo(b.x+50, b.y+50);
 			tempCtx.arc(b.x, b.y, tempCtx.lineWidth / 2, 0, Math.PI * 2, !0);
 			tempCtx.fill();
 			tempCtx.closePath();
@@ -21,7 +17,7 @@ function Brush(tempCanvas, tempCtx, mousePoints, chosenColor, chosenSize) {
 			return;
 		}
 		
-		// Tmp canvas is always cleared up before drawing.
+		// Tmp canvas is cleared up before drawing.
 		tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
 		
 		tempCtx.beginPath();
@@ -42,6 +38,6 @@ function Brush(tempCanvas, tempCtx, mousePoints, chosenColor, chosenSize) {
 			mousePoints[i + 1].y
 		);
 		tempCtx.stroke();
-	};
+	}
 
 }
