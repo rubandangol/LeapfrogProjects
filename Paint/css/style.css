@@ -27,26 +27,26 @@ body{
 }
 
 .inner-main-wrapper{
-	width: 1280px;
+	width: 1320px;
 	margin: 0 auto;
 }
 
 .tools-wrapper{
-	min-width: 1270;
+	min-width: 1310px;
 	height: 85px;
 	background-color: #1e1b1b;
 	padding: 5px;
 }
 
 .outer-canvas-wrapper{
-	width: 1260px;
+	width: 1300px;
 	height: 525px;
 	padding: 10px;
 	background-color: #343434;
 }
 
 .canvas-wrapper{
-	min-width: 1260px;
+	min-width: 1300px;
 	height: 525px;
 	background-color: #ffffff;
 	position: relative;

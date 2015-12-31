@@ -299,6 +299,11 @@ function ToolBar(){
 		save.innerHtml('Save');
 		save.appendTo(document.querySelector('.other-tools-wrapper'));
 		
+		var open = new Element('input');
+		open.addId('open-button');
+		open.innerHtml('Open');
+		open.addType('file');
+		open.appendTo(document.querySelector('.other-tools-wrapper'));
 
 	}
 
