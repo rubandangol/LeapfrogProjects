@@ -426,10 +426,7 @@ function Paint(){
             }
 
 	 	});
-/*
-		//Open button event listener
-		document.getElementById('open-button').addEventListener('change', openImage, false);	 	
-*/
+
 	}
 
 	var reDraw = function(){
@@ -579,25 +576,6 @@ function Paint(){
 			reDraw();		
 		}
 	}
-
-	var imageHandler = function(e2){ 
-  		          
-  		var image = new Image();
-  		image.src = e2.target.result;
-  		image.onload = function(){
-    		ctx.drawImage(image, 0, 0);
-  		}          
-  		//store.innerHTML='<img src="' + e2.target.result +'">';
-	}
-
-	var openImage = function(e1){
-  		var filename = e1.target.files[0]; 
-  		var fr = new FileReader();
-  		fr.onload = imageHandler;  
-  		fr.readAsDataURL(filename); 
-	}
-
-
 
 	init();
 }
