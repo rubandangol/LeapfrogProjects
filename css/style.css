@@ -1,0 +1,185 @@
+.clearfix:before, .clearfix:after{
+	content:"";
+	display:table;
+}
+
+.clearfix:after{
+	clear:both;
+}
+
+.clearfix, .inner-wrapper{
+	zoom:1;
+}
+
+body li{
+	float: left;
+	list-style: none;
+}
+
+body{
+	color: #999999;
+}
+
+.main-wrapper{
+	width: 100%;
+	height: 100%;
+	background-color: #100c0c;
+}
+
+.inner-main-wrapper{
+	width: 1320px;
+	margin: 0 auto;
+}
+
+.tools-wrapper{
+	min-width: 1310px;
+	height: 85px;
+	background-color: #1e1b1b;
+	padding: 5px;
+}
+
+.outer-canvas-wrapper{
+	width: 1300px;
+	height: 525px;
+	padding: 10px;
+	background-color: #343434;
+}
+
+.canvas-wrapper{
+	min-width: 1300px;
+	height: 525px;
+	background-color: #ffffff;
+	position: relative;
+}
+
+#canvas{
+	width: 100%;
+	height: 100%;
+	position: absolute;
+}
+
+#tempCanvas {
+	position: absolute;
+	left: 0px; right: 0;
+	bottom: 0; top: 0;
+	cursor: crosshair;
+}
+
+.tools-wrapper li{
+	background-repeat: no-repeat;
+	background-position: center;
+	width: 32px;
+	height: 32px;
+}
+
+.tools-wrapper li:hover{
+	background-color: #707070;
+}
+
+.tools-wrapper li:active{
+	background-color: #707070;
+}
+
+.tool{
+	border: 1px black solid;
+	float: left;
+	margin-right: 5px;
+	background-color: #343434;
+	padding: 5px;
+}
+
+#move{
+	background-image: url(../images/move.png);
+}
+
+#brush{
+	background-image: url(../images/brush.png);
+	
+}
+
+#eraser{
+	background-image: url(../images/eraser.png);
+}
+
+#bucket{
+	background-image: url(../images/bucket.png);
+}
+
+#line{
+	background-image: url(../images/line.png);
+}
+
+#rectangle{
+	background-image: url(../images/rectangle.png);
+}
+
+#circle{
+	background-image: url(../images/circle.png);
+}
+
+#red{
+	background-color: red;
+}
+
+#blue{
+	background-color: blue;
+}
+
+#green{
+	background-color: green;
+}
+
+#yellow{
+	background-color: yellow;
+}
+
+#black{
+	background-color: black;
+}
+
+.x-coordinate{
+	margin-right: 5px;
+}
+
+#text_tool {
+	position: absolute;
+	border: 1px dashed black;
+	outline: 0;
+	display: none;
+	
+	font: 10px Verdana;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.mouse-coordinates-wrapper{
+	width: 200px;
+}
+
+.x-coord-wrapper{
+	float: left;
+	width: 100px;
+}
+
+.y-coord-wrapper{
+	float: right;
+	width: 100px;
+}
+
+.title{
+	display: block;
+	text-align: center;
+}
+
+.delete-layer{
+	width: 20px;
+	height: 20px;
+	background-image: url(../images/delete-layer.png);
+	padding-right: 4px;
+	float: left;
+}
+
+.select-layer{
+	width: 140px;
+	float: right;
+}
